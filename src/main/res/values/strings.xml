@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bimoid</string>
+    <string name="title_connect">Подключиться</string>
+    <string name="title_disconnect">Отключиться</string>
+    <string name="title_my_profile">Мой профиль</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_about_program">О программе</string>
+    <string name="title_exit">Выход</string>
+    <string name="title_one">Один</string>
+    <string name="title_two">Два</string>
+    <string name="title_three">Три</string>
+    <string name="title_four">Четыре</string>
+    <string name="title_five">Пять</string>
+    <string name="title_six">Шесть</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="button_text">Connect</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
