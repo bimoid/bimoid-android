@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity
 
     public static String server = "bimoid.net";
     public static String login = "jimbot";
-    public static String password = "qLQhctipZX";
+    public static String password = "AEZAKMI";
 
     public static Handler handler;
 
