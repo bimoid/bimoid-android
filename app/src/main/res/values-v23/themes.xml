@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Bimoid" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/status_bar</item>
-    </style>
-
     <!-- Splash Screen theme. -->
     <style name="Theme.Bimoid.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@drawable/splash_background</item>
+        <item name="windowSplashScreenBackground">@color/primary</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_bimoid</item>
         <item name="postSplashScreenTheme">@style/Theme.Bimoid</item>
     </style>

@@ -1,0 +1,49 @@
+<!--
+  ~ Bimoid - Corporate messenger
+  ~ Copyright (C) 2014—2022 Alexander Krysin
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="144dp"
+    android:height="144dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:pathData="M6.249,32a25.751,26 0,1 0,51.501 0a25.751,26 0,1 0,-51.501 0z"
+        android:strokeColor="#d3d3d3"
+        android:strokeWidth="3">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="26.561"
+                android:centerY="24.979"
+                android:gradientRadius="26.589"
+                android:tileMode="clamp"
+                android:type="radial">
+                <item
+                    android:color="#FACCEFFF"
+                    android:offset="0.047"
+                    tools:targetApi="n" />
+                <item
+                    android:color="#FB47BEED"
+                    android:offset="1"
+                    tools:targetApi="n" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
