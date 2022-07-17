@@ -26,15 +26,15 @@ import io.github.obimp.listener.ContactListListener
  * @author Alexander Krysin
  */
 object ContactListManager : ContactListListener {
-    val contactList = mutableStateOf<Array<ContactListItem>?>(null)
+    val contactList = mutableStateOf<List<ContactListItem>?>(null)
 
-    override fun onAuthRequest(userid: String?, reason: String?) {}
+    override fun onAuthRequest(accountName: String, reason: String) {}
 
-    override fun onAuthReply(userid: String?, reply: Boolean) {}
+    override fun onAuthReply(accountName: String, replyCode: Int) {}
 
-    override fun onAuthRevoke(userid: String?, reason: String?) {}
+    override fun onAuthRevoke(accountName: String, reason: String) {}
 
-    override fun onLoadContactList(cl: Array<ContactListItem>) {
-        contactList.value = cl
+    override fun onContactListLoad(contactList: List<ContactListItem>) {
+        this.contactList.value = contactList
     }
 }
