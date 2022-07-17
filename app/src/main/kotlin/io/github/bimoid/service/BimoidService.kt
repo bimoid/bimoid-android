@@ -18,15 +18,11 @@
 
 package io.github.bimoid.service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.bimoid.BimoidDatabase
-import io.github.bimoid.R
 import io.github.bimoid.cl.ContactListManager
 import io.github.obimp.OBIMPConnection
 import kotlinx.coroutines.Dispatchers
@@ -44,26 +40,6 @@ class BimoidService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        val notificationChannel = NotificationChannel(
-            "connections",
-            "Активные соединения",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(notificationChannel)
-        startForeground(
-            246643,
-            NotificationCompat
-                .Builder(this, "connections")
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Подключено")
-                .setContentText("Установлено соединение")
-                .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setColor(getColor(R.color.primary))
-                .build()
-        )
         runBlocking(Dispatchers.IO) {
             database.accountDao().getAll().forEach {
                 val obimpConnection = OBIMPConnection(it.server, it.username, it.password)
