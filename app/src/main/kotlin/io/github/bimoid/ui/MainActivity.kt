@@ -50,7 +50,6 @@ import io.github.bimoid.BimoidPreferences
 import io.github.bimoid.R
 import io.github.bimoid.WelcomeActivity
 import io.github.bimoid.cl.ContactListManager
-import io.github.bimoid.service.BimoidService
 import io.github.bimoid.ui.theme.BimoidTheme
 import io.github.obimp.cl.Contact
 import javax.inject.Inject
@@ -72,7 +71,6 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, WelcomeActivity::class.java))
             finish()
         }
-        startForegroundService(Intent(this, BimoidService::class.java))
         setContent {
             BimoidTheme {
                 Scaffold(
