@@ -23,7 +23,9 @@ import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.bimoid.BimoidDatabase
+import io.github.bimoid.BuildConfig
 import io.github.bimoid.cl.ContactListManager
+import io.github.bimoid.pres.PresenceManager
 import io.github.obimp.OBIMPConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -42,8 +44,9 @@ class BimoidService : Service() {
         super.onCreate()
         runBlocking(Dispatchers.IO) {
             database.accountDao().getAll().forEach {
-                val obimpConnection = OBIMPConnection(it.server, it.username, it.password)
+                val obimpConnection = OBIMPConnection(it.server, it.username, it.password, "Bimoid", BuildConfig.VERSION_NAME)
                 obimpConnection.addContactListListener(ContactListManager)
+                obimpConnection.addUserStatusListener(PresenceManager)
                 connections.add(obimpConnection)
             }
         }

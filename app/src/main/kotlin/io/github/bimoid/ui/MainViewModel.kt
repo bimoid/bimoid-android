@@ -38,4 +38,10 @@ class MainViewModel @Inject constructor(private val database: BimoidDatabase) : 
                 .insert(Account(server = server, username = username, password = password))
         }
     }
+
+    fun exitFromAccounts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            database.accountDao().getAll().forEach(database.accountDao()::delete)
+        }
+    }
 }

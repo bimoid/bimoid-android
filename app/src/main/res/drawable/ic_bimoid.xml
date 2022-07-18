@@ -26,7 +26,7 @@
     android:viewportHeight="64">
     <path
         android:pathData="M6.249,32a25.751,26 0,1 0,51.501 0a25.751,26 0,1 0,-51.501 0z"
-        android:strokeColor="#d3d3d3"
+        android:strokeColor="#ffffff"
         android:strokeWidth="3">
         <aapt:attr name="android:fillColor">
             <gradient
