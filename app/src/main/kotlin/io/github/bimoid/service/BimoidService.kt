@@ -20,13 +20,17 @@ package io.github.bimoid.service
 
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.bimoid.BimoidDatabase
 import io.github.bimoid.BuildConfig
 import io.github.bimoid.cl.ContactListManager
+import io.github.bimoid.data.entity.Account
+import io.github.bimoid.im.InstantMessagingManager
 import io.github.bimoid.pres.PresenceManager
 import io.github.obimp.OBIMPConnection
+import io.github.obimp.util.SystemInfoUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -39,14 +43,21 @@ class BimoidService : Service() {
     private val connections = mutableListOf<OBIMPConnection>()
     @Inject
     lateinit var database: BimoidDatabase
+    @Inject
+    lateinit var instantMessagingManager: InstantMessagingManager
 
     override fun onCreate() {
         super.onCreate()
+        SystemInfoUtil.osName = "Android ${Build.VERSION.RELEASE}"
         runBlocking(Dispatchers.IO) {
+            database.accountDao().insert(
+                Account(server = "bimoid.net", username = "jimbot", password = "1b2ac4guf")
+            )
             database.accountDao().getAll().forEach {
                 val obimpConnection = OBIMPConnection(it.server, it.username, it.password, "Bimoid", BuildConfig.VERSION_NAME)
                 obimpConnection.addContactListListener(ContactListManager)
                 obimpConnection.addUserStatusListener(PresenceManager)
+                obimpConnection.addMessageListener(instantMessagingManager)
                 connections.add(obimpConnection)
             }
         }

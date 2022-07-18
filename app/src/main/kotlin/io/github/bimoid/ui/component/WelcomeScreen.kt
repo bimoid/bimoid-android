@@ -59,14 +59,15 @@ fun WelcomeScreen(onStartClick: () -> Unit = {}) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_bimoid),
-                    contentDescription = "Bimoid Logo"
+                    painter = painterResource(id = R.mipmap.ic_bimoid),
+                    contentDescription = "Bimoid Logo",
+                    alignment = Alignment.Center,
+                    modifier = Modifier.size(144.dp)
                 )
                 Text(
                     text = stringResource(id = R.string.app_name),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
-
                 )
                 Text(
                     text = "Корпоративный мессенджер\nс собственным сервером",

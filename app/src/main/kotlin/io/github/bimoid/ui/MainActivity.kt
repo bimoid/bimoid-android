@@ -67,11 +67,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        if (preferences.getIsFirstLaunch()) {
+        /*if (preferences.getIsFirstLaunch()) {
             preferences.setIsFirstLaunch(false)
             startActivity(Intent(this, WelcomeActivity::class.java))
             finish()
-        }
+        }*/
         startService(Intent(this, BimoidService::class.java))
         setContent {
             var actionsMenuExpanded by remember { mutableStateOf(false) }
