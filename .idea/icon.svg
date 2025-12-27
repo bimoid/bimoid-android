@@ -1,0 +1,12 @@
+<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+ <g id="Layer_1">
+  <title>Layer 1</title>
+  <ellipse stroke-width="3" fill="url(#svg_11)" cx="32" cy="32" id="svg_3" rx="25.7506" ry="25.99987" stroke="#d3d3d3"/>
+ </g>
+ <defs>
+  <radialGradient id="svg_11" spreadMethod="pad" cx="0.39453" cy="0.36798" r="0.5">
+   <stop stop-color="#ccefff" stop-opacity="0.98047" offset="0.04688"/>
+   <stop stop-color="#47beed" stop-opacity="0.98438" offset="1"/>
+  </radialGradient>
+ </defs>
+</svg>
