@@ -18,40 +18,36 @@
 
 package io.github.bimoid.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.bimoid.BimoidPreferences
-import io.github.bimoid.R
-import io.github.bimoid.WelcomeActivity
 import io.github.bimoid.cl.ContactListManager
 import io.github.bimoid.pres.PresenceManager
 import io.github.bimoid.service.BimoidService
+import io.github.bimoid.ua.AvatarManager
+import io.github.bimoid.ui.component.AuthForm
+import io.github.bimoid.ui.component.ContactList
+import io.github.bimoid.ui.component.Drawer
+import io.github.bimoid.ui.component.TopBar
 import io.github.bimoid.ui.theme.BimoidTheme
-import io.github.obimp.cl.Contact
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -64,241 +60,81 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var preferences: BimoidPreferences
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        /*if (preferences.getIsFirstLaunch()) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (preferences.getIsFirstLaunch()) {
             preferences.setIsFirstLaunch(false)
             startActivity(Intent(this, WelcomeActivity::class.java))
             finish()
-        }*/
-        startService(Intent(this, BimoidService::class.java))
+        }
+        lifecycleScope.launch {
+            if (viewModel.getAccountsAsync().await().isNotEmpty()) {
+                startService(Intent(this@MainActivity, BimoidService::class.java))
+            }
+            viewModel.getLastMessages()
+        }
         setContent {
             var actionsMenuExpanded by remember { mutableStateOf(false) }
             var contactList by remember { ContactListManager.contactList }
             val onlineUsers by remember { PresenceManager.onlineUsers }
+            val scaffoldState = rememberScaffoldState()
+            val coroutineScope = rememberCoroutineScope()
+            val lastMessages by remember { viewModel.lastMessages }
+            val userAvatars by remember { AvatarManager.userAvatars }
             BimoidTheme {
                 Scaffold(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    scaffoldState = scaffoldState,
                     topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(text = stringResource(id = R.string.app_name))
+                        TopBar(
+                            onMenuButtonClick = {
+                                coroutineScope.launch { scaffoldState.drawerState.open() }
                             },
-                            actions = {
-                                IconButton(onClick = { actionsMenuExpanded = true }) {
-                                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Действия")
-                                    DropdownMenu(expanded = actionsMenuExpanded, onDismissRequest = { actionsMenuExpanded = false }) {
-                                        DropdownMenuItem(onClick = { stopService(Intent(this@MainActivity, BimoidService::class.java)) }) {
-                                            Text(text = "Отключиться")
-                                        }
-                                        DropdownMenuItem(onClick = { viewModel.exitFromAccounts(); contactList = null }) {
-                                            Text(text = "Выйти из аккаунта")
-                                        }
-                                    }
-                                }
-                            }
+                            onActionsButtonClick = { actionsMenuExpanded = true },
+                            actionsMenuExpanded = actionsMenuExpanded,
+                            onActionsMenuDismissRequest = { actionsMenuExpanded = false },
+                            onDisconnectClick = {
+                                stopService(
+                                    Intent(
+                                        this@MainActivity,
+                                        BimoidService::class.java
+                                    )
+                                )
+                            },
+                            onLogoutClick = { viewModel.exitFromAccounts(); contactList = null }
                         )
-                    }
-                ) { contentPadding ->
+                    },
+                    drawerContent = { Drawer() }
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(contentPadding),
+                            .background(color = MaterialTheme.colors.background),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (contactList == null) {
-                            AuthForm(viewModel)
-                        }
-                        contactList?.let { cl ->
-                            var isFirstItem = true
-                            cl.filterIsInstance<Contact>().forEach {
-                                if (!isFirstItem) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(1.dp)
-                                            .padding(start = 72.dp)
-                                            .background(color = Color(0x11000000))
-                                    )
-                                }
-                                isFirstItem = false
-                                ContactListItem(it, onlineUsers.contains(it.accountName))
+                            AuthForm(viewModel) {
+                                startService(Intent(this@MainActivity, BimoidService::class.java))
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AuthForm(viewModel: MainViewModel? = null) {
-    var server by remember { mutableStateOf("bimoid.net") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card(elevation = 2.dp) {
-            Column(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TextField(
-                    value = server,
-                    onValueChange = { server = it },
-                    label = { Text(text = "Сервер:") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Dns,
-                            contentDescription = "Server"
-                        )
-                    },
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                )
-                TextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text(text = "ID Пользователя:") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "User"
-                        )
-                    },
-                    singleLine = true,
-                    maxLines = 1,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                )
-                TextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text(text = "Пароль:") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Password,
-                            contentDescription = "Password"
-                        )
-                    },
-                    singleLine = true,
-                    maxLines = 1,
-                    visualTransformation = PasswordVisualTransformation(),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
-                )
-                Button(onClick = {
-                    viewModel?.addAccount(server, username, password)
-                }) {
-                    Text(text = "Войти")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ContactListItem(contact: Contact? = null, isOnline: Boolean) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .background(color = MaterialTheme.colors.primary, shape = CircleShape)
-        ) {
-            Text(
-                text = if (contact?.contactName != null) contact.contactName.first().uppercase() else "А",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier.align(Alignment.Center)
-            )
-            if (isOnline) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 32.dp, top = 32.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp)
-                            .background(
-                                color = Color(0xFF00BB00),
-                                shape = CircleShape
+                        contactList?.let { contactList ->
+                            ContactList(
+                                contactList = contactList,
+                                onlineUsers = onlineUsers,
+                                onContactListItemClick = { itemId ->
+                                    val intent = Intent(this@MainActivity, ChatActivity::class.java)
+                                    intent.putExtra("contact_id", itemId)
+                                    startActivity(intent)
+                                },
+                                lastMessages = lastMessages,
+                                userAvatars = userAvatars
                             )
-                    )
-                }
-            }
-        }
-        Column {
-            Text(
-                text = contact?.contactName ?: "Alex",
-                fontSize = 21.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "@${contact?.accountName ?: "alex"}",
-                fontSize = 18.sp,
-                color = Color.Gray,
-                fontStyle = FontStyle.Italic
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ContactListItemPreview() {
-    BimoidTheme {
-        ContactListItem(isOnline = true)
-    }
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BimoidTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = stringResource(id = R.string.app_name))
-                    },
-                    actions = {
-                        IconButton(onClick = {}) {
-                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Действия")
                         }
                     }
-                )
-            }
-        ) { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AuthForm()
+                }
             }
         }
     }

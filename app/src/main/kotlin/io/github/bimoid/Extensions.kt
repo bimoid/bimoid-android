@@ -18,9 +18,6 @@
 
 package io.github.bimoid
 
-import android.os.Build
-
 /**
  * @author Alexander Krysin
  */
-

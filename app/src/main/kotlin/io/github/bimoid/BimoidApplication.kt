@@ -19,10 +19,22 @@
 package io.github.bimoid
 
 import android.app.Application
+import android.os.Build
 import dagger.hilt.android.HiltAndroidApp
+import io.github.obimp.util.LibVersion
+import io.github.obimp.util.SystemInfoUtil
+import io.github.obimp.util.Version
 
 /**
  * @author Alexander Krysin
  */
 @HiltAndroidApp
-class BimoidApplication : Application()
+class BimoidApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        val version = BuildConfig.VERSION_NAME.split(".").map(String::toInt)
+        LibVersion.name = "Bimoid"
+        LibVersion.version = Version(version[0], version[1], version[2], 0)
+        SystemInfoUtil.osName = "Android ${Build.VERSION.RELEASE}"
+    }
+}

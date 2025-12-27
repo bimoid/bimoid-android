@@ -18,13 +18,17 @@
 
 package io.github.bimoid.ui
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.bimoid.BimoidDatabase
 import io.github.bimoid.data.entity.Account
+import io.github.bimoid.data.entity.Message
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.stream.Collectors
 import javax.inject.Inject
 
 /**
@@ -32,10 +36,19 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(private val database: BimoidDatabase) : ViewModel() {
-    fun addAccount(server: String, username: String, password: String) {
+    val lastMessages = mutableStateOf<Map<String, Message>?>(null)
+
+    fun addAccount(server: String, port: Int, secure: Boolean, username: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            database.accountDao()
-                .insert(Account(server = server, username = username, password = password))
+            database.accountDao().insert(
+                    Account(
+                        server = server,
+                        port = port,
+                        secure = secure,
+                        username = username,
+                        password = password
+                    )
+                )
         }
     }
 
@@ -43,5 +56,14 @@ class MainViewModel @Inject constructor(private val database: BimoidDatabase) : 
         viewModelScope.launch(Dispatchers.IO) {
             database.accountDao().getAll().forEach(database.accountDao()::delete)
         }
+    }
+
+    fun getAccountsAsync() = viewModelScope.async(Dispatchers.IO) {
+        database.accountDao().getAll()
+    }
+
+    fun getLastMessages() = viewModelScope.launch(Dispatchers.IO) {
+        lastMessages.value = database.messageDao().getLastMessages().stream()
+            .collect(Collectors.toMap(Message::contact) { it })
     }
 }

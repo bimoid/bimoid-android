@@ -19,7 +19,7 @@
 package io.github.bimoid.cl
 
 import androidx.compose.runtime.mutableStateOf
-import io.github.obimp.cl.ContactListItem
+import io.github.obimp.cl.*
 import io.github.obimp.listener.ContactListListener
 
 /**
@@ -28,13 +28,39 @@ import io.github.obimp.listener.ContactListListener
 object ContactListManager : ContactListListener {
     val contactList = mutableStateOf<List<ContactListItem>?>(null)
 
-    override fun onAuthRequest(accountName: String, reason: String) {}
+    override fun onAddContactListItem(contactListItemAddingResult: AddingResult) {}
 
-    override fun onAuthReply(accountName: String, replyCode: Int) {}
+    override fun onAuthorizationReply(
+        accountName: String,
+        authorizationReply: AuthorizationReply
+    ) {}
 
-    override fun onAuthRevoke(accountName: String, reason: String) {}
+    override fun onAuthorizationRequest(accountName: String, reason: String) {}
 
-    override fun onContactListLoad(contactList: List<ContactListItem>) {
-        this.contactList.value = contactList
+    override fun onAuthorizationRevoke(accountName: String, reason: String) {}
+
+    override fun onBeginUpdate() {}
+
+    override fun onContactListItemOperation(
+        contactListItem: ContactListItem,
+        operation: Operation
+    ) {}
+
+    override fun onContactListLoaded(items: List<ContactListItem>) {
+        this.contactList.value = items
     }
+
+    override fun onContactListParameters(contactListParameters: ContactListParameters) {}
+
+    override fun onContactListVerify(contactListMD5Hash: ByteArray) {}
+
+    override fun onDeleteContactListItem(contactListItemDeletionResult: DeletionResult) {}
+
+    override fun onEndUpdate() {}
+
+    override fun onOffauthDone() {}
+
+    override fun onUpdateContactListItem(
+        contactListItemUpdateOperationResult: UpdateOperationResult
+    ) {}
 }

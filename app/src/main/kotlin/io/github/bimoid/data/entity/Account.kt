@@ -27,8 +27,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "accounts")
 data class Account(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
+    val id: Int = 0,
     val server: String,
+    val port: Int,
+    val secure: Boolean,
     val username: String,
     val password: String
 )

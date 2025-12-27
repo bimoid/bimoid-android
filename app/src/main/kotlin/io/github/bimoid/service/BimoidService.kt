@@ -20,17 +20,14 @@ package io.github.bimoid.service
 
 import android.app.Service
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.bimoid.BimoidDatabase
-import io.github.bimoid.BuildConfig
 import io.github.bimoid.cl.ContactListManager
-import io.github.bimoid.data.entity.Account
+import io.github.bimoid.connection.ConnectionManager
 import io.github.bimoid.im.InstantMessagingManager
 import io.github.bimoid.pres.PresenceManager
-import io.github.obimp.OBIMPConnection
-import io.github.obimp.util.SystemInfoUtil
+import io.github.obimp.connection.PlainObimpConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -40,7 +37,6 @@ import javax.inject.Inject
  */
 @AndroidEntryPoint
 class BimoidService : Service() {
-    private val connections = mutableListOf<OBIMPConnection>()
     @Inject
     lateinit var database: BimoidDatabase
     @Inject
@@ -48,24 +44,23 @@ class BimoidService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        SystemInfoUtil.osName = "Android ${Build.VERSION.RELEASE}"
         runBlocking(Dispatchers.IO) {
-            database.accountDao().insert(
-                Account(server = "bimoid.net", username = "jimbot", password = "1b2ac4guf")
-            )
             database.accountDao().getAll().forEach {
-                val obimpConnection = OBIMPConnection(it.server, it.username, it.password, "Bimoid", BuildConfig.VERSION_NAME)
-                obimpConnection.addContactListListener(ContactListManager)
-                obimpConnection.addUserStatusListener(PresenceManager)
-                obimpConnection.addMessageListener(instantMessagingManager)
-                connections.add(obimpConnection)
+                val obimpConnection = PlainObimpConnection()
+                obimpConnection.addListener(ContactListManager)
+                obimpConnection.addListener(PresenceManager)
+                obimpConnection.addListener(instantMessagingManager)
+                obimpConnection.connect("bimoid.net", 7023)
+                ConnectionManager.connections[obimpConnection] = Pair(it.username, it.password)
             }
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         runBlocking(Dispatchers.IO) {
-            connections.forEach(OBIMPConnection::connect)
+            ConnectionManager.connections.forEach { (connection, credentials) ->
+                connection.login(credentials.first, credentials.second)
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }

@@ -21,12 +21,15 @@ package io.github.bimoid
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import io.github.bimoid.data.dao.AccountDao
+import io.github.bimoid.data.dao.MessageDao
 import io.github.bimoid.data.entity.Account
+import io.github.bimoid.data.entity.Message
 
 /**
  * @author Alexander Krysin
  */
-@Database(entities = [Account::class], version = 1, exportSchema = false)
+@Database(entities = [Account::class, Message::class], version = 1, exportSchema = false)
 abstract class BimoidDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
+    abstract fun messageDao(): MessageDao
 }

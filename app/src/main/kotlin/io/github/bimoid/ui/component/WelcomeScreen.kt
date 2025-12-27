@@ -71,7 +71,7 @@ fun WelcomeScreen(onStartClick: () -> Unit = {}) {
                 )
                 Text(
                     text = "Корпоративный мессенджер\nс собственным сервером",
-                    fontSize = 21.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Light,
                     softWrap = false,

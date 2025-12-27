@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="io.github.bimoid">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -20,8 +19,9 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Bimoid.SplashScreen">
+            android:theme="@style/Theme.Bimoid.SplashScreen"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,10 +29,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".WelcomeActivity" />
+        <activity android:name=".ui.WelcomeActivity" />
+
+        <activity android:name=".ui.ChatActivity" />
 
         <service
             android:name=".service.BimoidService"
+            android:windowSoftInputMode="adjustResize"
             android:enabled="true"
             android:exported="false" />
 

@@ -18,8 +18,16 @@
 
 package io.github.bimoid.im
 
+import io.github.bimoid.BimoidDatabase
+import io.github.bimoid.data.entity.Message
+import io.github.bimoid.data.entity.MessageDirection
 import io.github.bimoid.notification.NotificationManager
-import io.github.obimp.listener.MessageListener
+import io.github.obimp.im.EncryptionKeyReply
+import io.github.obimp.im.IncomingMessage
+import io.github.obimp.im.InstantMessagingParameters
+import io.github.obimp.im.Notification
+import io.github.obimp.listener.InstantMessagingListener
+import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,18 +36,39 @@ import javax.inject.Singleton
  */
 @Singleton
 class InstantMessagingManager @Inject constructor(
+    private val database: BimoidDatabase,
     private val notificationManager: NotificationManager
-) : MessageListener {
-    override fun onIncomingMessage(
+) : InstantMessagingListener {
+    override fun onEncryptionKeyReply(
         accountName: String,
-        messageId: Int,
-        messageType: Int,
-        messageData: String
-    ) {
-        notificationManager.showMessageNotification(accountName, messageData)
+        encryptionKeyReply: EncryptionKeyReply
+    ) {}
+
+    override fun onEncryptionKeyRequest(accountName: String) {}
+
+    override fun onIncomingMessage(incomingMessage: IncomingMessage) {
+        val accountName = incomingMessage.accountName
+        val text = String(incomingMessage.messageData.array())
+        database.messageDao().insert(
+            Message(
+                contact = accountName,
+                direction = MessageDirection.INCOMING,
+                text = text,
+                read = false,
+                delivered = true,
+                datetime = LocalDateTime.now()
+            )
+        )
+        notificationManager.showMessageNotification(accountName, text)
     }
 
-    override fun onMessageDelivered(accountName: String, messageId: Int) {}
+    override fun onInstantMessagingParameters(
+        instantMessagingParameters: InstantMessagingParameters
+    ) {}
 
-    override fun onNotify(accountName: String, notificationType: Int, notificationValue: Int) {}
+    override fun onMessageReport(accountName: String, messageId: Int) {}
+
+    override fun onNotify(notification: Notification) {}
+
+    override fun onOfflineDone() {}
 }

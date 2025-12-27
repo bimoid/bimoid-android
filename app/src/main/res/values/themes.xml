@@ -2,6 +2,7 @@
 <resources>
     <style name="Theme.Bimoid" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:fitsSystemWindows">false</item>
     </style>
 
     <!-- Splash Screen theme. -->
@@ -9,5 +10,6 @@
         <item name="windowSplashScreenBackground">@drawable/splash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_bimoid</item>
         <item name="postSplashScreenTheme">@style/Theme.Bimoid</item>
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
     </style>
 </resources>

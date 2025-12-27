@@ -16,31 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io.github.bimoid
+package io.github.bimoid.connection
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import dagger.hilt.android.AndroidEntryPoint
-import io.github.bimoid.ui.MainActivity
-import io.github.bimoid.ui.component.WelcomeScreen
-import io.github.bimoid.ui.theme.BimoidTheme
+import io.github.obimp.connection.PlainObimpConnection
 
 /**
  * @author Alexander Krysin
  */
-@AndroidEntryPoint
-class WelcomeActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BimoidTheme {
-                WelcomeScreen {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                }
-            }
-        }
-    }
+object ConnectionManager {
+    val connections = mutableMapOf<PlainObimpConnection, Pair<String, String>>()
 }

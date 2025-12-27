@@ -19,19 +19,35 @@
 package io.github.bimoid.pres
 
 import androidx.compose.runtime.mutableStateOf
-import io.github.obimp.listener.UserStatusListener
+import io.github.bimoid.ua.AvatarManager
+import io.github.obimp.listener.PresenceInfoListener
+import io.github.obimp.presence.MailNotification
+import io.github.obimp.presence.OnlineContactInfo
+import io.github.obimp.presence.PresenceInfo
+import io.github.obimp.presence.PresenceInfoParameters
 
 /**
  * @author Alexander Krysin
  */
-object PresenceManager : UserStatusListener {
+object PresenceManager : PresenceInfoListener {
     val onlineUsers = mutableStateOf<List<String>>(listOf())
 
-    override fun onUserOffline(accountName: String) {
-        onlineUsers.value = onlineUsers.value - accountName
+    override fun onContactOffline(accountName: String) {
+        onlineUsers.value -= accountName
     }
 
-    override fun onUserOnline(accountName: String, status: Int) {
-        onlineUsers.value = onlineUsers.value + accountName
+    override fun onContactOnline(onlineContactInfo: OnlineContactInfo) {
+        onlineUsers.value += onlineContactInfo.accountName
+        onlineContactInfo.avatarMD5Hash?.let {
+            AvatarManager.requestAvatar(it, onlineContactInfo.accountName)
+        }
     }
+
+    override fun onMailNotification(mailNotification: MailNotification) {}
+
+    override fun onOwnMailURL(ownMailURL: String) {}
+
+    override fun onPresenceInfo(presenceInfo: PresenceInfo) {}
+
+    override fun onPresenceInfoParameters(presenceInfoParameters: PresenceInfoParameters) {}
 }
