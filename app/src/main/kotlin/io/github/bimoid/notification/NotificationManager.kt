@@ -18,14 +18,15 @@
 
 package io.github.bimoid.notification
 
+import android.Manifest
 import android.content.ContentResolver.SCHEME_ANDROID_RESOURCE
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION
 import android.media.AudioAttributes.USAGE_NOTIFICATION
 import android.media.AudioManager.STREAM_NOTIFICATION
-import android.net.Uri
 import android.os.Build
+import androidx.annotation.RequiresPermission
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
@@ -33,6 +34,7 @@ import androidx.core.app.NotificationCompat.CATEGORY_MESSAGE
 import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_HIGH
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.bimoid.R
 import io.github.bimoid.ui.theme.primary
@@ -43,7 +45,7 @@ import javax.inject.Singleton
  * @author Alexander Krysin
  */
 @Singleton
-class NotificationManager @Inject constructor(@ApplicationContext private val context: Context) {
+class NotificationManager @Inject constructor(@param:ApplicationContext private val context: Context) {
     private val notificationManager = NotificationManagerCompat.from(context)
     private var notificationId = 0
         get() = field++
@@ -57,9 +59,7 @@ class NotificationManager @Inject constructor(@ApplicationContext private val co
                     .setLightsEnabled(true)
                     .setShowBadge(true)
                     .setSound(
-                        Uri.parse(
-                            SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.snd_inc_msg
-                        ),
+                        (SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.snd_inc_msg).toUri(),
                         AudioAttributes.Builder()
                             .setContentType(CONTENT_TYPE_SONIFICATION)
                             .setUsage(USAGE_NOTIFICATION)
@@ -72,6 +72,7 @@ class NotificationManager @Inject constructor(@ApplicationContext private val co
         }
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     fun showMessageNotification(contactName: String, messageText: String) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setCategory(CATEGORY_MESSAGE)
@@ -84,9 +85,7 @@ class NotificationManager @Inject constructor(@ApplicationContext private val co
             .setColorized(true)
             .setColor(primary.toArgb())
             .setSound(
-                Uri.parse(
-                    SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.snd_inc_msg
-                ),
+                (SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.snd_inc_msg).toUri(),
                 STREAM_NOTIFICATION
             )
             .setVibrate(longArrayOf(100, 300, 200, 300))
