@@ -21,13 +21,14 @@ package io.github.bimoid.notification
 import android.Manifest
 import android.content.ContentResolver.SCHEME_ANDROID_RESOURCE
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION
 import android.media.AudioAttributes.USAGE_NOTIFICATION
 import android.media.AudioManager.STREAM_NOTIFICATION
 import android.os.Build
-import androidx.annotation.RequiresPermission
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.CATEGORY_MESSAGE
@@ -72,8 +73,14 @@ class NotificationManager @Inject constructor(@param:ApplicationContext private 
         }
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     fun showMessageNotification(contactName: String, messageText: String) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setCategory(CATEGORY_MESSAGE)
             .setPriority(PRIORITY_HIGH)
