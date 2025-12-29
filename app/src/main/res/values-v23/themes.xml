@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Splash Screen theme. -->
-    <style name="Theme.Bimoid.SplashScreen" parent="Theme.Bimoid.SplashScreen">
-        <item name="android:windowSplashScreenBackground">@color/primary</item>
+    <style name="Theme.Bimoid.SplashScreen" parent="android:Theme.Material.Light.NoActionBar">
+        <!--<item name="android:windowSplashScreenBackground">@color/primary</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_bimoid</item>
-        <item name="android:splashScreenTheme">@style/Theme.Bimoid</item>
+        <item name="android:splashScreenTheme">@style/Theme.Bimoid</item>-->
     </style>
 </resources>
