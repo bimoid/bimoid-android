@@ -28,6 +28,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
@@ -117,11 +118,12 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     //drawerContent = { Drawer() },
-                ) {
+                ) { contentPadding ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color = MaterialTheme.colorScheme.background),
+                            .background(color = MaterialTheme.colorScheme.background)
+                            .padding(contentPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (contactList == null) {
