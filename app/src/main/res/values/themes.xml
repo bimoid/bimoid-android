@@ -6,10 +6,10 @@
     </style>
 
     <!-- Splash Screen theme. -->
-    <style name="Theme.Bimoid.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@drawable/splash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_bimoid</item>
-        <item name="postSplashScreenTheme">@style/Theme.Bimoid</item>
+    <style name="Theme.Bimoid.SplashScreen" parent="Theme.Bimoid.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@drawable/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_bimoid</item>
+        <item name="android:splashScreenTheme">@style/Theme.Bimoid</item>
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
     </style>
 </resources>

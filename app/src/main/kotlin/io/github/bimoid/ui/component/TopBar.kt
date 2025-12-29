@@ -19,10 +19,16 @@
 package io.github.bimoid.ui.component
 
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,8 +37,8 @@ import io.github.bimoid.R
 /**
  * @author Alexander Krysin
  */
-
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun TopBar(
     onMenuButtonClick: () -> Unit,
     onActionsButtonClick: () -> Unit,
@@ -64,12 +70,14 @@ fun TopBar(
                     expanded = actionsMenuExpanded,
                     onDismissRequest = onActionsMenuDismissRequest
                 ) {
-                    DropdownMenuItem(onClick = onDisconnectClick) {
-                        Text(text = "Отключиться")
-                    }
-                    DropdownMenuItem(onClick = onLogoutClick) {
-                        Text(text = "Выйти из аккаунта")
-                    }
+                    DropdownMenuItem(
+                        onClick = onDisconnectClick,
+                        text = { Text(text = "Отключиться") }
+                    )
+                    DropdownMenuItem(
+                        onClick = onLogoutClick,
+                        text = { Text(text = "Выйти из аккаунта") }
+                    )
                 }
             }
         }

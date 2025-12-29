@@ -16,22 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package io.github.bimoid.ui.component
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Pin
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
@@ -66,7 +93,7 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Card(elevation = 2.dp) {
+        Card(elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
             Column(
                 modifier = Modifier
                     .width(300.dp)
@@ -98,8 +125,8 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
                     },
                     singleLine = true,
                     maxLines = 1,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
@@ -126,8 +153,8 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
                     },
                     singleLine = true,
                     maxLines = 1,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
@@ -144,12 +171,12 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Secure",
-                        tint = MaterialTheme.colors.onSurface.copy(alpha = 0.54f)
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.54f)
                     )
                     Text(
                         modifier = Modifier.padding(start = 16.dp),
                         text = "Шифрование",
-                        color = LocalContentColor.current.copy(LocalContentAlpha.current)
+                        color = LocalContentColor.current.copy(LocalContentColor.current.alpha)
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -159,11 +186,11 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
                         Switch(
                             checked = secure,
                             onCheckedChange = { secure = it },
-                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary)
+                            colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.primary)
                         )
                     }
                 }
-                Divider(color = Color.Gray, thickness = 0.75.dp)
+                HorizontalDivider(color = Color.Gray, thickness = 0.75.dp)
                 val usernameBringIntoViewRequester = remember { BringIntoViewRequester() }
                 TextField(
                     modifier = Modifier
@@ -187,8 +214,8 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
                     },
                     singleLine = true,
                     maxLines = 1,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
@@ -217,8 +244,8 @@ fun AuthForm(viewModel: MainViewModel? = null, onAccountAdded: () -> Unit = {}) 
                     singleLine = true,
                     maxLines = 1,
                     visualTransformation = PasswordVisualTransformation(),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })

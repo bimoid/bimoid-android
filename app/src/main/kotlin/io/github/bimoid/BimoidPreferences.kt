@@ -22,6 +22,7 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.core.content.edit
 
 /**
  * @author Alexander Krysin
@@ -33,5 +34,5 @@ class BimoidPreferences @Inject constructor(@ApplicationContext context: Context
     fun getIsFirstLaunch() = preferences.getBoolean("is_first_launch", true)
 
     fun setIsFirstLaunch(isFirstLaunch: Boolean) =
-        preferences.edit().putBoolean("is_first_launch", isFirstLaunch).apply()
+        preferences.edit { putBoolean("is_first_launch", isFirstLaunch) }
 }

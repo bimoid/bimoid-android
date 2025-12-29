@@ -24,14 +24,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import io.github.bimoid.BimoidDatabase
 import io.github.bimoid.cl.ContactListManager
 import io.github.bimoid.ui.component.ChatScreen
 import io.github.bimoid.ui.theme.BimoidTheme
 import io.github.obimp.cl.Contact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * @author Alexander Krysin
@@ -40,8 +38,8 @@ import javax.inject.Inject
 class ChatActivity : ComponentActivity() {
     private val viewModel: ChatViewModel by viewModels()
 
-    @Inject
-    lateinit var database: BimoidDatabase
+    //@Inject
+    //lateinit var database: BimoidDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +54,7 @@ class ChatActivity : ComponentActivity() {
                         contact = contact,
                         messages = messages,
                         onBackPressed = onBackPressedDispatcher::onBackPressed,
-                        onSendMessage = { text ->
+                        onSendMessage = { _ ->
                             lifecycleScope.launch(Dispatchers.IO) {
                                 /*OBIMP.sendMessage(
                                     ConnectionManager.connections.keys.first(),

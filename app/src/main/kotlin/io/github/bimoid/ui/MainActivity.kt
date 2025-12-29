@@ -20,6 +20,7 @@ package io.github.bimoid.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,13 +28,15 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+//import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +47,6 @@ import io.github.bimoid.service.BimoidService
 import io.github.bimoid.ua.AvatarManager
 import io.github.bimoid.ui.component.AuthForm
 import io.github.bimoid.ui.component.ContactList
-import io.github.bimoid.ui.component.Drawer
 import io.github.bimoid.ui.component.TopBar
 import io.github.bimoid.ui.theme.BimoidTheme
 import kotlinx.coroutines.launch
@@ -62,7 +64,6 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         if (preferences.getIsFirstLaunch()) {
@@ -72,7 +73,17 @@ class MainActivity : ComponentActivity() {
         }
         lifecycleScope.launch {
             if (viewModel.getAccountsAsync().await().isNotEmpty()) {
-                startService(Intent(this@MainActivity, BimoidService::class.java))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(Intent(
+                        this@MainActivity,
+                        BimoidService::class.java
+                    ))
+                } else {
+                    startService(Intent(
+                        this@MainActivity,
+                        BimoidService::class.java
+                    ))
+                }
             }
             viewModel.getLastMessages()
         }
@@ -80,22 +91,20 @@ class MainActivity : ComponentActivity() {
             var actionsMenuExpanded by remember { mutableStateOf(false) }
             var contactList by remember { ContactListManager.contactList }
             val onlineUsers by remember { PresenceManager.onlineUsers }
-            val scaffoldState = rememberScaffoldState()
-            val coroutineScope = rememberCoroutineScope()
+            //val coroutineScope = rememberCoroutineScope()
             val lastMessages by remember { viewModel.lastMessages }
             val userAvatars by remember { AvatarManager.userAvatars }
             BimoidTheme {
                 Scaffold(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    scaffoldState = scaffoldState,
+                    modifier = Modifier.background(MaterialTheme.colorScheme.primary),
                     topBar = {
                         TopBar(
                             onMenuButtonClick = {
-                                coroutineScope.launch { scaffoldState.drawerState.open() }
+                                //coroutineScope.launch { scaffoldState.drawerState.open() }
                             },
-                            onActionsButtonClick = { actionsMenuExpanded = true },
+                            onActionsButtonClick = { /*actionsMenuExpanded = true*/ },
                             actionsMenuExpanded = actionsMenuExpanded,
-                            onActionsMenuDismissRequest = { actionsMenuExpanded = false },
+                            onActionsMenuDismissRequest = { /*actionsMenuExpanded = false*/ },
                             onDisconnectClick = {
                                 stopService(
                                     Intent(
@@ -104,15 +113,15 @@ class MainActivity : ComponentActivity() {
                                     )
                                 )
                             },
-                            onLogoutClick = { viewModel.exitFromAccounts(); contactList = null }
+                            onLogoutClick = { viewModel.exitFromAccounts()/*; contactList = null*/ }
                         )
                     },
-                    drawerContent = { Drawer() }
+                    //drawerContent = { Drawer() },
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color = MaterialTheme.colors.background),
+                            .background(color = MaterialTheme.colorScheme.background),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (contactList == null) {
