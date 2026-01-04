@@ -16,9 +16,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<vector
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:aapt="http://schemas.android.com/aapt"
+<vector xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="144dp"
     android:height="144dp"
@@ -39,12 +37,10 @@
                 android:endColor="#FB47BEED">
                 <item
                     android:color="#FACCEFFF"
-                    android:offset="0.047"
-                    tools:targetApi="n" />
+                    android:offset="0.047" />
                 <item
                     android:color="#FB47BEED"
-                    android:offset="1"
-                    tools:targetApi="n" />
+                    android:offset="1" />
             </gradient>
         </aapt:attr>
     </path>

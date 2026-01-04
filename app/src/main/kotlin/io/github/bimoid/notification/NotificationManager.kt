@@ -57,8 +57,9 @@ class NotificationManager @Inject constructor(@param:ApplicationContext private 
                 NotificationChannelCompat.Builder(CHANNEL_ID, IMPORTANCE_HIGH)
                     .setName("Messages")
                     .setDescription("Bimoid messages")
-                    .setLightsEnabled(true)
-                    .setShowBadge(true)
+                    .setImportance(IMPORTANCE_HIGH)
+                    .setVibrationEnabled(true)
+                    .setVibrationPattern(longArrayOf(100, 300, 200, 300))
                     .setSound(
                         (SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.snd_inc_msg).toUri(),
                         AudioAttributes.Builder()
@@ -66,8 +67,8 @@ class NotificationManager @Inject constructor(@param:ApplicationContext private 
                             .setUsage(USAGE_NOTIFICATION)
                             .build()
                     )
-                    .setVibrationEnabled(true)
-                    .setVibrationPattern(longArrayOf(100, 300, 200, 300))
+                    .setLightsEnabled(true)
+                    .setShowBadge(true)
                     .build()
             )
         }
@@ -85,11 +86,10 @@ class NotificationManager @Inject constructor(@param:ApplicationContext private 
             .setCategory(CATEGORY_MESSAGE)
             .setPriority(PRIORITY_HIGH)
             .setAutoCancel(true)
-            .setSmallIcon(R.drawable.ic_bimoid)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(contactName)
+            .setSubText("Новое сообщение")
             .setContentText(messageText)
-            .addAction(R.drawable.ic_bimoid, "Прочитано", null)
-            .setColorized(true)
             .setColor(primary.toArgb())
             .setSound(
                 (SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.snd_inc_msg).toUri(),
