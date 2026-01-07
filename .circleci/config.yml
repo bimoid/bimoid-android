@@ -1,0 +1,15 @@
+version: 2.1
+orbs:
+  android: circleci/android@2.0.0 # Use the latest version of the orb
+
+workflows:
+  test:
+    jobs:
+      - android/run-tests: # A pre-defined job from the orb to run unit tests
+          # The orb handles environment setup, dependencies, and test execution
+          # Use resource-class to specify compute resources (e.g., large)
+          resource-class: large
+      - android/run-ui-tests: # A pre-defined job from the orb to run instrumentation tests
+          # Requires specifying a system image for the emulator
+          system-image: system-images;android-30;default;x86 # Example image, check sdkmanager --list for options
+          resource-class: large
