@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  android: circleci/android@2.0.0 # Use the latest version of the orb
+  android: circleci/android@2.5.0 # Use the latest version of the orb
 
 workflows:
   test:
